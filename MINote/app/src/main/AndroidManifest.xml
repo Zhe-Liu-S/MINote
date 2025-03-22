@@ -51,7 +51,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="vnd.android.cursor.item/text_note" />
                 <data android:mimeType="vnd.android.cursor.item/call_note" />
-            </intent-filter >>
+            </intent-filter >
 
             <intent-filter >
                 <action android:name="android.intent.action.INSERT_OR_EDIT" />
