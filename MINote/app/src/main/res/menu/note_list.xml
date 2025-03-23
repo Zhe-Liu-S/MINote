@@ -36,4 +36,17 @@
     <item
         android:id="@+id/menu_search"
         android:title="@string/menu_search"/>
+
+    <item
+        android:id="@+id/menu_sky"
+        android:title="@string/menu_sky"/>
+
+    <item
+        android:id="@+id/menu_sea"
+        android:title="@string/menu_sea"/>
+
+    <item
+        android:id="@+id/menu_blossom"
+        android:title="@string/menu_blossom"/>
+
 </menu>
