@@ -29,6 +29,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    packaging {
+        resources.excludes.add("META-INF/DEPENDENCIES");
+        resources.excludes.add("META-INF/NOTICE");
+        resources.excludes.add("META-INF/LICENSE");
+        resources.excludes.add("META-INF/LICENSE.txt");
+        resources.excludes.add("META-INF/NOTICE.txt");
+    }
 }
 
 dependencies {
