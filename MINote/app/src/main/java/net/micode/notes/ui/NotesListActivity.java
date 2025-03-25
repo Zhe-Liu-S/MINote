@@ -79,6 +79,8 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 
 public class NotesListActivity extends Activity implements OnClickListener, OnItemLongClickListener {
+
+    private int mode = -1;
     private static final int FOLDER_NOTE_LIST_QUERY_TOKEN = 0;
 
     private static final int FOLDER_LIST_QUERY_TOKEN      = 1;
@@ -139,6 +141,11 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.note_list);
+
+        getWindow().setBackgroundDrawableResource(R.drawable.sky);
+        getWindow().setBackgroundDrawableResource(R.drawable.sea);
+        getWindow().setBackgroundDrawableResource(R.drawable.blossom);
+
         initResources();
 
         /**
@@ -163,7 +170,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
             StringBuilder sb = new StringBuilder();
             InputStream in = null;
             try {
-                 in = getResources().openRawResource(R.raw.introduction);
+                in = getResources().openRawResource(R.raw.introduction);
                 if (in != null) {
                     InputStreamReader isr = new InputStreamReader(in);
                     BufferedReader br = new BufferedReader(isr);
@@ -307,7 +314,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         }
 
         public void onItemCheckedStateChanged(ActionMode mode, int position, long id,
-                boolean checked) {
+                                              boolean checked) {
             mNotesListAdapter.setCheckedItem(position, checked);
             updateMenu();
         }
@@ -325,14 +332,14 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
                     builder.setTitle(getString(R.string.alert_title_delete));
                     builder.setIcon(android.R.drawable.ic_dialog_alert);
                     builder.setMessage(getString(R.string.alert_message_delete_notes,
-                                             mNotesListAdapter.getSelectedCount()));
+                            mNotesListAdapter.getSelectedCount()));
                     builder.setPositiveButton(android.R.string.ok,
-                                             new DialogInterface.OnClickListener() {
-                                                 public void onClick(DialogInterface dialog,
-                                                         int which) {
-                                                     batchDelete();
-                                                 }
-                                             });
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,
+                                                    int which) {
+                                    batchDelete();
+                                }
+                            });
                     builder.setNegativeButton(android.R.string.cancel, null);
                     builder.show();
                     break;
@@ -413,7 +420,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
                 : NORMAL_SELECTION;
         mBackgroundQueryHandler.startQuery(FOLDER_NOTE_LIST_QUERY_TOKEN, null,
                 Notes.CONTENT_NOTE_URI, NoteItemData.PROJECTION, selection, new String[] {
-                    String.valueOf(mCurrentFolderId)
+                        String.valueOf(mCurrentFolderId)
                 }, NoteColumns.TYPE + " DESC," + NoteColumns.MODIFIED_DATE + " DESC");
     }
 
@@ -624,7 +631,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
                         values.put(NoteColumns.LOCAL_MODIFIED, 1);
                         mContentResolver.update(Notes.CONTENT_NOTE_URI, values, NoteColumns.ID
                                 + "=?", new String[] {
-                            String.valueOf(mFocusNoteDataItem.getId())
+                                String.valueOf(mFocusNoteDataItem.getId())
                         });
                     }
                 } else if (!TextUtils.isEmpty(name)) {
@@ -700,7 +707,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         }
 
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] {
-            appWidgetId
+                appWidgetId
         });
 
         sendBroadcast(intent);
@@ -775,12 +782,36 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
         } else {
             Log.e(TAG, "Wrong state:" + mState);
         }
+
+        if(mode == 1)
+            menu.findItem(R.id.menu_sky).setVisible(false);
+        else if(mode == 0)
+            menu.findItem(R.id.menu_sea).setVisible(false);
+        else if(mode == -1)
+            menu.findItem(R.id.menu_blossom).setVisible(false);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case  R.id.menu_sky:{
+                mode = 1;
+                getWindow().setBackgroundDrawableResource(R.drawable.sky);
+                break;
+            }
+            case  R.id.menu_sea:{
+                mode = 0;
+                getWindow().setBackgroundDrawableResource(R.drawable.sea);
+                break;
+            }
+            case  R.id.menu_blossom:{
+                mode = -1;
+                getWindow().setBackgroundDrawableResource(R.drawable.blossom);
+                break;
+            }
+
             case R.id.menu_new_folder: {
                 showCreateOrModifyFolderDialog(true);
                 break;
@@ -920,7 +951,7 @@ public class NotesListActivity extends Activity implements OnClickListener, OnIt
     private void startQueryDestinationFolders() {
         String selection = NoteColumns.TYPE + "=? AND " + NoteColumns.PARENT_ID + "<>? AND " + NoteColumns.ID + "<>?";
         selection = (mState == ListEditState.NOTE_LIST) ? selection:
-            "(" + selection + ") OR (" + NoteColumns.ID + "=" + Notes.ID_ROOT_FOLDER + ")";
+                "(" + selection + ") OR (" + NoteColumns.ID + "=" + Notes.ID_ROOT_FOLDER + ")";
 
         mBackgroundQueryHandler.startQuery(FOLDER_LIST_QUERY_TOKEN,
                 null,
